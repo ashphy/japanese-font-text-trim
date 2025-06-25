@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>日本語フォント上下余白可視化</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;600&family=Roboto:wght@400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="app.css">
 </head>
 <body>
@@ -13,88 +14,47 @@
     </header>
 
     <main>
-        <section class="controls">
-            <div class="input-group">
-                <label for="text-input">テキスト:</label>
-                <input type="text" id="text-input" value="あじぽ文字 AaBbCc" placeholder="表示したいテキストを入力">
+
+        <section class="button-section">
+            <div class="button-with-label">
+                <div class="font-label">ヒラギノ角ゴシック</div>
+                <button class="submit-button hiragino-button no-line">送信ボタン</button>
             </div>
-            
-            <div class="input-group">
-                <label for="font-size">フォントサイズ:</label>
-                <input type="range" id="font-size" min="12" max="120" value="48">
-                <span id="font-size-value">48px</span>
+            <div class="button-with-label">
+                <div class="font-label">Noto Sans JP</div>
+                <button class="submit-button no-line">送信ボタン</button>
             </div>
-            
-            <div class="input-group">
-                <label for="font-family">フォント:</label>
-                <select id="font-family">
-                    <option value="'Hiragino Sans', 'Hiragino Kaku Gothic ProN', 'Noto Sans CJK JP', sans-serif">ヒラギノ角ゴ</option>
-                    <option value="'Yu Gothic', 'YuGothic', sans-serif">游ゴシック</option>
-                    <option value="'Noto Sans CJK JP', sans-serif">Noto Sans CJK JP</option>
-                    <option value="'Source Han Sans', sans-serif">Source Han Sans</option>
-                    <option value="serif">明朝体（デフォルト）</option>
-                    <option value="monospace">等幅フォント</option>
-                </select>
+            <div class="button-with-label">
+                <div class="font-label">Roboto</div>
+                <button class="submit-button english-button no-line">Submit Button</button>
+            </div>
+        </section>
+
+        <section class="button-section">
+            <div class="button-with-label">
+                <div class="font-label">ヒラギノ角ゴシック</div>
+                <button class="submit-button hiragino-button">送信ボタン</button>
+            </div>
+            <div class="button-with-label">
+                <div class="font-label">Noto Sans JP</div>
+                <button class="submit-button">送信ボタン</button>
+            </div>
+            <div class="button-with-label">
+                <div class="font-label">Roboto</div>
+                <button class="submit-button english-button">Submit Button</button>
             </div>
         </section>
 
         <section class="visualization">
             <div class="text-container">
-                <div class="baseline-guide"></div>
                 <div class="text-sample" id="text-sample">あじぽ文字 AaBbCc</div>
-                <div class="bounding-box"></div>
-            </div>
-            
-            <div class="metrics">
-                <div class="metric">
-                    <span class="label">上部余白:</span>
-                    <span class="value" id="top-margin">-</span>
-                </div>
-                <div class="metric">
-                    <span class="label">下部余白:</span>
-                    <span class="value" id="bottom-margin">-</span>
-                </div>
-                <div class="metric">
-                    <span class="label">行高:</span>
-                    <span class="value" id="line-height">-</span>
-                </div>
             </div>
         </section>
     </main>
 
-    <footer>
-        <p>GitHub Pages向けのシンプルな日本語フォント解析ツール</p>
-    </footer>
 
     <script>
-        const textInput = document.getElementById('text-input');
-        const fontSizeSlider = document.getElementById('font-size');
-        const fontSizeValue = document.getElementById('font-size-value');
-        const fontFamilySelect = document.getElementById('font-family');
-        const textSample = document.getElementById('text-sample');
-
-        function updateText() {
-            textSample.textContent = textInput.value || 'あじぽ文字 AaBbCc';
-        }
-
-        function updateFontSize() {
-            const size = fontSizeSlider.value;
-            fontSizeValue.textContent = size + 'px';
-            textSample.style.fontSize = size + 'px';
-        }
-
-        function updateFontFamily() {
-            textSample.style.fontFamily = fontFamilySelect.value;
-        }
-
-        textInput.addEventListener('input', updateText);
-        fontSizeSlider.addEventListener('input', updateFontSize);
-        fontFamilySelect.addEventListener('change', updateFontFamily);
-
-        // 初期設定
-        updateText();
-        updateFontSize();
-        updateFontFamily();
+        // No dynamic functionality needed - everything is fixed
     </script>
 </body>
 </html>
