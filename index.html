@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>日本語フォント上下余白可視化</title>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;600&family=Roboto:wght@400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;600&family=Roboto:wght@400;600&family=M+PLUS+1p:wght@400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="app.css">
 </head>
 <body>
@@ -50,11 +50,138 @@
                 <div class="text-sample" id="text-sample">あじぽ文字 AaBbCc</div>
             </div>
         </section>
+
+        <section class="canvas-section">
+            <h2>Canvas でのベースライン可視化</h2>
+            <canvas id="baseline-canvas" width="800" height="200"></canvas>
+        </section>
     </main>
 
 
     <script>
-        // No dynamic functionality needed - everything is fixed
+        // Canvas baseline visualization
+        const canvas = document.getElementById('baseline-canvas');
+        const ctx = canvas.getContext('2d');
+        
+        function drawTextWithBaseline() {
+            // Clear canvas
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // Text settings
+            const text = 'あ雲 Aajg';
+            const fontSize = 48;
+            const leftX = canvas.width / 3;
+            const centerX = canvas.width / 2;
+            const rightX = canvas.width * 2 / 3;
+            const y = canvas.height / 2;
+            
+            // Font configurations
+            const fonts = [
+                { name: 'Noto Sans JP', family: "'Noto Sans JP', sans-serif", x: leftX },
+                { name: 'M PLUS 1p', family: "'M PLUS 1p', sans-serif", x: centerX },
+                { name: 'ヒラギノ角ゴシック', family: "'ヒラギノ角ゴシック', 'ヒラギノ角ゴシック', sans-serif", x: rightX }
+            ];
+            
+            // Draw continuous baseline across the entire canvas
+            ctx.strokeStyle = '#ff4444';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(50, y);
+            ctx.lineTo(canvas.width - 50, y);
+            ctx.stroke();
+            
+            fonts.forEach((font, index) => {
+                // Set font
+                ctx.font = `${fontSize}px ${font.family}`;
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'alphabetic';
+                
+                // Get text metrics
+                const metrics = ctx.measureText(text);
+                const textWidth = metrics.width;
+                const textHeight = fontSize;
+                
+                // Draw background rectangle for text area
+                ctx.fillStyle = 'rgba(102, 126, 234, 0.1)';
+                ctx.fillRect(font.x - textWidth/2 - 10, y - fontSize + 10, textWidth + 20, textHeight + 10);
+                
+                // Draw text
+                ctx.fillStyle = '#333';
+                ctx.fillText(text, font.x, y);
+                
+                // Draw additional baseline information lines
+                const actualBoundingBoxAscent = metrics.actualBoundingBoxAscent || 0;
+                const actualBoundingBoxDescent = metrics.actualBoundingBoxDescent || 0;
+                
+                // Top line (ascent) - continuous across canvas
+                if (actualBoundingBoxAscent > 0) {
+                    const colors = ['#44ff44', '#ffaa44', '#88ff88'];
+                    ctx.strokeStyle = colors[index] || '#cccccc';
+                    ctx.lineWidth = 1;
+                    ctx.beginPath();
+                    ctx.moveTo(50, y - actualBoundingBoxAscent);
+                    ctx.lineTo(canvas.width - 50, y - actualBoundingBoxAscent);
+                    ctx.stroke();
+                }
+                
+                // Bottom line (descent) - continuous across canvas
+                if (actualBoundingBoxDescent > 0) {
+                    const colors = ['#4444ff', '#ff44aa', '#8888ff'];
+                    ctx.strokeStyle = colors[index] || '#cccccc';
+                    ctx.lineWidth = 1;
+                    ctx.beginPath();
+                    ctx.moveTo(50, y + actualBoundingBoxDescent);
+                    ctx.lineTo(canvas.width - 50, y + actualBoundingBoxDescent);
+                    ctx.stroke();
+                }
+                
+                // Font name label
+                ctx.fillStyle = '#666';
+                ctx.font = '14px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText(font.name, font.x, y - fontSize - 20);
+                
+                // Baseline labels (only show for first font to avoid duplication)
+                if (index === 0) {
+                    ctx.font = '12px Arial';
+                    ctx.textAlign = 'left';
+                    ctx.fillText('ベースライン', 60, y + 4);
+                    if (actualBoundingBoxAscent > 0) {
+                        ctx.fillText('Noto アセント', 60, y - actualBoundingBoxAscent + 4);
+                    }
+                    if (actualBoundingBoxDescent > 0) {
+                        ctx.fillText('Noto ディセント', 60, y + actualBoundingBoxDescent + 4);
+                    }
+                }
+                
+                // M PLUS 1p font labels
+                if (index === 1) {
+                    ctx.font = '12px Arial';
+                    ctx.textAlign = 'center';
+                    if (actualBoundingBoxAscent > 0) {
+                        ctx.fillText('M PLUS アセント', centerX, y - actualBoundingBoxAscent + 4);
+                    }
+                    if (actualBoundingBoxDescent > 0) {
+                        ctx.fillText('M PLUS ディセント', centerX, y + actualBoundingBoxDescent + 4);
+                    }
+                }
+                
+                // Hiragino font labels
+                if (index === 2) {
+                    ctx.font = '12px Arial';
+                    ctx.textAlign = 'right';
+                    if (actualBoundingBoxAscent > 0) {
+                        ctx.fillText('ヒラギノ アセント', canvas.width - 60, y - actualBoundingBoxAscent + 4);
+                    }
+                    if (actualBoundingBoxDescent > 0) {
+                        ctx.fillText('ヒラギノ ディセント', canvas.width - 60, y + actualBoundingBoxDescent + 4);
+                    }
+                }
+            });
+        }
+        
+        // Draw when page loads
+        drawTextWithBaseline();
     </script>
 </body>
 </html>
